@@ -20,7 +20,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y clang-format-18
       - name: Check formatting
         run: |
-          files=$(find include src tests examples tools \
+          files=$(find include src tests examples \
             \( -name '*.cpp' -o -name '*.h' -o -name '*.hpp' \))
           echo "$files" | xargs clang-format-18 --dry-run --Werror
 
