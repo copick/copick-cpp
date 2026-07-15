@@ -32,9 +32,9 @@ class COPICK_API Segmentation {
   Run run() const;
 
   /// Read a region (default: whole array) at the given pyramid level.
-  Array3D numpy(const Region& region = Region(), int level = 0) const;
+  Array3D to_array(const Region& region = Region(), int level = 0) const;
   /// Write the segmentation (single level by default).
-  void from_numpy(const Array3D& data, int levels = 1);
+  void from_array(const Array3D& data, int levels = 1);
   /// Write a region into an existing level.
   void set_region(const Array3D& data, const Region& region, int level = 0);
 

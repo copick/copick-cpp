@@ -82,7 +82,7 @@ TEST_F(SampleData, TomogramsAndFeatures) {
 
   auto wbp = vs.get_tomogram("wbp");
   ASSERT_TRUE(wbp.valid());
-  copick::Array3D a = wbp.numpy();
+  copick::Array3D a = wbp.to_array();
   EXPECT_EQ(a.shape_z(), 64u);
   EXPECT_EQ(a.shape_y(), 64u);
   EXPECT_EQ(a.shape_x(), 64u);
@@ -95,7 +95,7 @@ TEST_F(SampleData, TomogramsAndFeatures) {
   std::sort(fts.begin(), fts.end());
   EXPECT_EQ(fts, (std::vector<std::string>{"edge", "sobel"}));
 
-  copick::Array3D sob = wbp.get_features("sobel").numpy();
+  copick::Array3D sob = wbp.get_features("sobel").to_array();
   EXPECT_EQ(sob.shape_z(), 64u);
   EXPECT_EQ(sob.dtype(), copick::DType::Float32);
 }
@@ -106,7 +106,7 @@ TEST_F(SampleData, RegionRead) {
   r.z.stop = 8;
   r.y.stop = 8;
   r.x.stop = 8;
-  copick::Array3D sub = wbp.numpy(r);
+  copick::Array3D sub = wbp.to_array(r);
   EXPECT_EQ(sub.shape_z(), 8u);
   const float* p = sub.data_as<float>();
   double sum = 0;
@@ -138,7 +138,7 @@ TEST_F(SampleData, SegmentationsParsed) {
   ASSERT_EQ(painting.size(), 1u);
   EXPECT_TRUE(painting[0].is_multilabel());
   EXPECT_DOUBLE_EQ(painting[0].voxel_size(), 10.0);
-  EXPECT_EQ(painting[0].numpy().shape_z(), 64u);
+  EXPECT_EQ(painting[0].to_array().shape_z(), 64u);
 
   auto membrane = run.get_segmentations("", "", "membrane");
   ASSERT_EQ(membrane.size(), 1u);

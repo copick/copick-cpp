@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
   // Tomogram: 4x4x4 float32 ramp (written by Python, blosc-compressed, multiscale).
   copick::Tomogram tomo = run.get_voxel_spacing(10.0).get_tomogram("wbp");
   if (!tomo.valid()) return fail("tomogram wbp not found");
-  copick::Array3D vol = tomo.numpy();
+  copick::Array3D vol = tomo.to_array();
   if (vol.shape_z() != 4 || vol.shape_x() != 4) return fail("tomogram shape");
   if (vol.data_as<float>()[0] != 0.0f || vol.data_as<float>()[63] != 63.0f)
     return fail("tomogram values");
@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
   // Segmentation.
   auto segs = run.get_segmentations("py", "1", "proteasome");
   if (segs.size() != 1) return fail("expected 1 segmentation");
-  copick::Array3D mask = segs[0].numpy();
+  copick::Array3D mask = segs[0].to_array();
   if (mask.size() != 64 || mask.dtype() != copick::DType::UInt8)
     return fail("segmentation shape/dtype");
 

@@ -73,7 +73,7 @@ TEST_F(ImageTest, TomogramWriteReadRegionAndMetadata) {
   auto tomo = vs.new_tomogram("wbp");
   EXPECT_DOUBLE_EQ(tomo.voxel_size(), 10.0);
 
-  tomo.from_numpy(ramp(copick::DType::Float32, 2, 3, 4));
+  tomo.from_array(ramp(copick::DType::Float32, 2, 3, 4));
 
   // Appears in enumeration once written.
   auto tomos = vs.tomograms();
@@ -82,14 +82,14 @@ TEST_F(ImageTest, TomogramWriteReadRegionAndMetadata) {
   EXPECT_TRUE(vs.get_tomogram("wbp").valid());
   EXPECT_FALSE(vs.get_tomogram("sirt").valid());
 
-  auto full = tomo.numpy();
+  auto full = tomo.to_array();
   ASSERT_EQ(full.size(), 24u);
   EXPECT_FLOAT_EQ(full.data_as<float>()[23], 23.0f);
 
   copick::Region r;
   r.z.start = 1;
   r.z.stop = 2;
-  auto sub = tomo.numpy(r);
+  auto sub = tomo.to_array(r);
   EXPECT_EQ(sub.shape_z(), 1u);
   EXPECT_FLOAT_EQ(sub.data_as<float>()[0], 12.0f);  // (1,0,0) = 12
 
@@ -106,10 +106,10 @@ TEST_F(ImageTest, TomogramWriteReadRegionAndMetadata) {
 TEST_F(ImageTest, FeaturesWriteReadEnumerate) {
   auto vs = run.new_voxel_spacing(10.0);
   auto tomo = vs.new_tomogram("wbp");
-  tomo.from_numpy(ramp(copick::DType::Float32, 2, 2, 2));
+  tomo.from_array(ramp(copick::DType::Float32, 2, 2, 2));
 
   auto feat = tomo.new_features("sobel");
-  feat.from_numpy(ramp(copick::DType::Float32, 2, 2, 2));
+  feat.from_array(ramp(copick::DType::Float32, 2, 2, 2));
 
   auto feats = tomo.features();
   ASSERT_EQ(feats.size(), 1u);
@@ -118,7 +118,7 @@ TEST_F(ImageTest, FeaturesWriteReadEnumerate) {
   EXPECT_TRUE(tomo.get_features("sobel").valid());
   EXPECT_FALSE(tomo.get_features("nope").valid());
 
-  auto arr = feat.numpy();
+  auto arr = feat.to_array();
   EXPECT_EQ(arr.size(), 8u);
   EXPECT_FLOAT_EQ(arr.data_as<float>()[7], 7.0f);
 
@@ -129,7 +129,7 @@ TEST_F(ImageTest, FeaturesWriteReadEnumerate) {
 TEST_F(ImageTest, SetRegionOnTomogram) {
   auto vs = run.new_voxel_spacing(10.0);
   auto tomo = vs.new_tomogram("wbp");
-  tomo.from_numpy(copick::Array3D(copick::DType::Float32, 4, 4, 4));  // zeros
+  tomo.from_array(copick::Array3D(copick::DType::Float32, 4, 4, 4));  // zeros
 
   copick::Array3D block(copick::DType::Float32, 2, 2, 2);
   float* bp = block.data_as<float>();
@@ -143,7 +143,7 @@ TEST_F(ImageTest, SetRegionOnTomogram) {
   r.x.stop = 3;
   tomo.set_region(block, r);
 
-  auto full = tomo.numpy();
+  auto full = tomo.to_array();
   const float* fp = full.data_as<float>();
   auto idx = [](std::size_t z, std::size_t y, std::size_t x) { return (z * 4 + y) * 4 + x; };
   EXPECT_FLOAT_EQ(fp[idx(1, 1, 1)], 5.0f);

@@ -37,14 +37,14 @@ int main(int argc, char** argv) {
   copick::Tomogram tomo = vs.new_tomogram("wbp");
   copick::Array3D vol(copick::DType::Float32, 4, 4, 4);
   for (std::size_t i = 0; i < vol.size(); ++i) vol.data_as<float>()[i] = static_cast<float>(i);
-  tomo.from_numpy(vol);
+  tomo.from_array(vol);
 
   // Segmentation: a 4x4x4 uint8 checkerboard.
   copick::Segmentation seg =
       run.new_segmentation(10.0, "proteasome", "1", /*multilabel=*/false, "cpp");
   copick::Array3D mask(copick::DType::UInt8, 4, 4, 4);
   for (std::size_t i = 0; i < mask.size(); ++i) mask.data_as<std::uint8_t>()[i] = i % 2;
-  seg.from_numpy(mask);
+  seg.from_array(mask);
 
   // Picks: two oriented points.
   copick::Picks picks = run.new_picks("proteasome", "0", "cpp");

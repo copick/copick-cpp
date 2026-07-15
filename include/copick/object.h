@@ -34,9 +34,9 @@ class COPICK_API Object {
   /// Whether a density map (Objects/<name>.zarr) exists for this particle object.
   bool has_density() const;
   /// Read the density map region (particle objects only).
-  Array3D numpy(const Region& region = Region(), int level = 0) const;
+  Array3D to_array(const Region& region = Region(), int level = 0) const;
   /// Write a density map for this particle object.
-  void from_numpy(const Array3D& data, double voxel_size, int levels = 1);
+  void from_array(const Array3D& data, double voxel_size, int levels = 1);
 
   const std::shared_ptr<detail::ObjectImpl>& impl() const { return impl_; }
 

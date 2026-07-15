@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
     std::cerr << "tomogram wbp not found\n";
     return 1;
   }
-  copick::Array3D vol = tomo.numpy();  // float32 (z, y, x)
+  copick::Array3D vol = tomo.to_array();  // float32 (z, y, x)
   const float* src = vol.data_as<float>();
 
   // --- Derive new data -----------------------------------------------------------
@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
   copick::Segmentation seg = run.new_segmentation(vs.voxel_size(), "proteasome", "auto",
                                                   /*is_multilabel=*/false, "processor",
                                                   /*exist_ok=*/true);
-  seg.from_numpy(mask);
+  seg.from_array(mask);
 
   // A pick at the brightest voxel (index -> z, y, x -> angstrom).
   const std::size_t nx = vol.shape_x(), ny = vol.shape_y();

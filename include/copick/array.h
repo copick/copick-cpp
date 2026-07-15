@@ -1,6 +1,5 @@
-// Array3D — an owning, contiguous 3D array, the C++ analog of the numpy arrays that
-// copick's numpy()/from_numpy()/set_region() pass around. Axis order is (z, y, x) to
-// match copick/zarr on-disk layout.
+// Array3D — an owning, contiguous 3D array that copick's to_array()/from_array()/set_region()
+// pass around. Axis order is (z, y, x) to match copick/zarr on-disk layout.
 //
 // PUBLIC HEADER — must compile under -std=c++11. Deliberately dependency-free so it can
 // cross the ABI boundary and be consumed from AreTomo3's C++11 build.

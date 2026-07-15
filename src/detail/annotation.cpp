@@ -137,14 +137,14 @@ bool Object::has_density() const {
   return !store.list_children(impl_->zarr_path()).empty();
 }
 
-Array3D Object::numpy(const Region& region, int level) const {
+Array3D Object::to_array(const Region& region, int level) const {
   if (!impl_->meta.is_particle)
     throw ValidationError("Object " + impl_->meta.name + " is not a particle.");
   auto& store = detail::read_store(impl_->root.get(), impl_->read_only);
   return detail::read_ome_level(store, impl_->zarr_path(), region, level);
 }
 
-void Object::from_numpy(const Array3D& data, double voxel_size, int levels) {
+void Object::from_array(const Array3D& data, double voxel_size, int levels) {
   (void)levels;
   if (!impl_->meta.is_particle)
     throw ValidationError("Object " + impl_->meta.name + " is not a particle.");
@@ -295,11 +295,11 @@ Run Segmentation::run() const {
   return Run(impl_->run);
 }
 
-Array3D Segmentation::numpy(const Region& region, int level) const {
+Array3D Segmentation::to_array(const Region& region, int level) const {
   auto& store = detail::read_store(impl_->root(), impl_->read_only);
   return detail::read_ome_level(store, impl_->path(), region, level);
 }
-void Segmentation::from_numpy(const Array3D& data, int levels) {
+void Segmentation::from_array(const Array3D& data, int levels) {
   (void)levels;
   if (impl_->read_only) throw PermissionError("Cannot write to a read-only segmentation.");
   detail::write_ome_array(impl_->root()->overlay, impl_->path(), data, impl_->voxel_size);

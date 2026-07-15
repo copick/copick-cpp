@@ -64,7 +64,7 @@ TEST(OverlayTest, StaticIsReadOnlyOverlayIsWritable) {
   {
     auto seed = copick::from_string(single_source_config(static_url));
     auto run = seed.new_run("TS_STATIC");
-    run.new_voxel_spacing(10.0).new_tomogram("wbp").from_numpy(block(7.0f));
+    run.new_voxel_spacing(10.0).new_tomogram("wbp").from_array(block(7.0f));
     auto pk = run.new_picks("proteasome", "0");
     copick::Point p;
     p.location.x = 1.0;
@@ -82,8 +82,8 @@ TEST(OverlayTest, StaticIsReadOnlyOverlayIsWritable) {
   // Its tomogram reads (from static) but is read-only.
   auto tomo = run.get_voxel_spacing(10.0).get_tomogram("wbp");
   ASSERT_TRUE(tomo.valid());
-  EXPECT_FLOAT_EQ(tomo.numpy().data_as<float>()[0], 7.0f);
-  EXPECT_THROW(tomo.from_numpy(block(1.0f)), copick::PermissionError);
+  EXPECT_FLOAT_EQ(tomo.to_array().data_as<float>()[0], 7.0f);
+  EXPECT_THROW(tomo.from_array(block(1.0f)), copick::PermissionError);
 
   // Its picks read (from static) but are read-only.
   auto picks = run.get_picks("proteasome");
@@ -99,6 +99,6 @@ TEST(OverlayTest, StaticIsReadOnlyOverlayIsWritable) {
 
   // A brand-new tomogram in the overlay is writable and round-trips.
   auto wtomo = root.get_run("TS_OVERLAY").new_voxel_spacing(10.0).new_tomogram("wbp");
-  wtomo.from_numpy(block(3.0f));
-  EXPECT_FLOAT_EQ(wtomo.numpy().data_as<float>()[0], 3.0f);
+  wtomo.from_array(block(3.0f));
+  EXPECT_FLOAT_EQ(wtomo.to_array().data_as<float>()[0], 3.0f);
 }

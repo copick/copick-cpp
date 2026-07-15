@@ -71,12 +71,12 @@ TEST_F(AnnotationTest, ObjectDensityMap) {
   EXPECT_FALSE(prot.has_density());
   copick::Array3D vol(copick::DType::Float32, 2, 2, 2);
   for (std::size_t i = 0; i < vol.size(); ++i) vol.data_as<float>()[i] = static_cast<float>(i);
-  prot.from_numpy(vol, 10.0);
+  prot.from_array(vol, 10.0);
   EXPECT_TRUE(prot.has_density());
-  EXPECT_FLOAT_EQ(prot.numpy().data_as<float>()[7], 7.0f);
+  EXPECT_FLOAT_EQ(prot.to_array().data_as<float>()[7], 7.0f);
 
   // Non-particle objects reject density writes.
-  EXPECT_THROW(root.get_object("membrane").from_numpy(vol, 10.0), copick::ValidationError);
+  EXPECT_THROW(root.get_object("membrane").from_array(vol, 10.0), copick::ValidationError);
 }
 
 TEST_F(AnnotationTest, PicksRoundTripAndFilter) {
@@ -127,12 +127,12 @@ TEST_F(AnnotationTest, SegmentationRoundTrip) {
 
   copick::Array3D mask(copick::DType::UInt8, 3, 3, 3);
   for (std::size_t i = 0; i < mask.size(); ++i) mask.data_as<std::uint8_t>()[i] = i % 2;
-  seg.from_numpy(mask);
+  seg.from_array(mask);
 
   // Multilabel with an arbitrary (non-pickable) name is allowed.
   auto ml = run.new_segmentation(10.0, "painting", "1", /*is_multilabel=*/true, "alice");
   copick::Array3D lab(copick::DType::UInt16, 2, 2, 2);
-  ml.from_numpy(lab);
+  ml.from_array(lab);
 
   // On-disk filenames.
   auto kv = copick::io::KvStore::open(url);
@@ -150,10 +150,10 @@ TEST_F(AnnotationTest, SegmentationRoundTrip) {
   auto paint = r2.get_segmentations("", "", "painting");
   ASSERT_EQ(paint.size(), 1u);
   EXPECT_TRUE(paint[0].is_multilabel());
-  EXPECT_EQ(paint[0].numpy().size(), 8u);
+  EXPECT_EQ(paint[0].to_array().size(), 8u);
 
   // Data round-trips.
-  auto back = prot[0].numpy();
+  auto back = prot[0].to_array();
   EXPECT_EQ(back.size(), 27u);
   EXPECT_EQ(back.dtype(), copick::DType::UInt8);
 }

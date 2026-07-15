@@ -203,12 +203,12 @@ VoxelSpacing Tomogram::voxel_spacing() const {
   return VoxelSpacing(impl_->vs);
 }
 
-Array3D Tomogram::numpy(const Region& region, int level) const {
+Array3D Tomogram::to_array(const Region& region, int level) const {
   auto& store = detail::read_store(impl_->root(), impl_->read_only);
   return detail::read_ome_level(store, impl_->zarr_path(), region, level);
 }
 
-void Tomogram::from_numpy(const Array3D& data, int levels) {
+void Tomogram::from_array(const Array3D& data, int levels) {
   (void)levels;  // single-level for now
   if (impl_->read_only) throw PermissionError("Cannot write to a read-only tomogram.");
   detail::write_ome_array(impl_->root()->overlay, impl_->zarr_path(), data, impl_->vs->voxel_size);
@@ -270,12 +270,12 @@ Tomogram Features::tomogram() const {
   return Tomogram(impl_->tomo);
 }
 
-Array3D Features::numpy(const Region& region, int level) const {
+Array3D Features::to_array(const Region& region, int level) const {
   auto& store = detail::read_store(impl_->root(), impl_->read_only);
   return detail::read_ome_level(store, impl_->zarr_path(), region, level);
 }
 
-void Features::from_numpy(const Array3D& data, int levels) {
+void Features::from_array(const Array3D& data, int levels) {
   (void)levels;
   if (impl_->read_only) throw PermissionError("Cannot write to read-only features.");
   detail::write_ome_array(impl_->root()->overlay, impl_->zarr_path(), data,

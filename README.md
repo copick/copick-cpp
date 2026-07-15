@@ -76,8 +76,8 @@ The C++ API mirrors the Python copick API (same entity hierarchy and method name
 copick::Root root = copick::from_file("config.json");
 copick::Run run = root.new_run("TS_001");                 // writes to the overlay
 copick::Tomogram tomo = run.new_voxel_spacing(10.0).new_tomogram("wbp");
-tomo.from_numpy(vol);                                     // OME-Zarr array + metadata
-copick::Array3D slab = tomo.numpy(roi);                   // windowed read
+tomo.from_array(vol);                                     // OME-Zarr array + metadata
+copick::Array3D slab = tomo.to_array(roi);                   // windowed read
 copick::Picks picks = run.new_picks("proteasome", "0");   // point annotations (JSON)
 ```
 
