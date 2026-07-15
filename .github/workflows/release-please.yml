@@ -9,9 +9,7 @@ permissions:
   pull-requests: write
 
 # Automates versioning + changelog from Conventional Commits. On merge of the release PR
-# it tags a release; GitHub attaches the source archives automatically. No compiled binary
-# is published — copick-cpp is built from source (see the README), since a prebuilt library
-# is only usable alongside the exact tensorstore/reflect-cpp versions it was linked against.
+# it tags a release; GitHub attaches the *source* archives automatically.
 jobs:
   release-please:
     name: release PR / release

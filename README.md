@@ -59,6 +59,18 @@ recompiling it: use **ccache** (`-DCMAKE_CXX_COMPILER_LAUNCHER=ccache`) and keep
 around. copick-cpp links only the Zarr driver + local-file kvstore, so building a specific target
 does not compile tensorstore's unused drivers (gcs/grpc, aws-s3, http).
 
+### Release builds (small binaries)
+
+```bash
+cmake -S . -B build-full-release -G Ninja -DCMAKE_CXX_COMPILER=g++ \
+  -DCMAKE_BUILD_TYPE=Release -DCOPICK_ENABLE_ZARR=ON -DCOPICK_ENABLE_MESH=ON
+cmake --build build-full-release --target copick_tests   # ~13 MB
+strip build-full-release/tests/copick_tests              # ~8 MB (also drops the symbol table)
+```
+
+Or with presets: `cmake --preset full-release && cmake --build --preset full-release`. `-DCMAKE_BUILD_TYPE=Release`
+works with any configuration.
+
 ### C++11 header guard
 
 `ctest` runs `cxx11_header_guard`, which compiles every public header under `-std=c++11` — a check

@@ -23,14 +23,25 @@
         "COPICK_ENABLE_ZARR": "ON",
         "COPICK_ENABLE_MESH": "ON"
       }
+    },
+    {
+      "name": "full-release",
+      "inherits": "full",
+      "displayName": "full, optimized Release (small binaries, no debug info)",
+      "binaryDir": "${sourceDir}/build-full-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     }
   ],
   "buildPresets": [
     { "name": "dev", "configurePreset": "dev" },
-    { "name": "full", "configurePreset": "full" }
+    { "name": "full", "configurePreset": "full" },
+    { "name": "full-release", "configurePreset": "full-release" }
   ],
   "testPresets": [
     { "name": "dev", "configurePreset": "dev", "output": { "outputOnFailure": true } },
-    { "name": "full", "configurePreset": "full", "output": { "outputOnFailure": true } }
+    { "name": "full", "configurePreset": "full", "output": { "outputOnFailure": true } },
+    { "name": "full-release", "configurePreset": "full-release", "output": { "outputOnFailure": true } }
   ]
 }

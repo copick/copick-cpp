@@ -43,7 +43,10 @@ jobs:
         run: ctest --test-dir build --output-on-failure
 
   full:
-    name: full build + test (tensorstore)
+    # Builds the optimized Release configuration (CMAKE_BUILD_TYPE=Release): no debug info,
+    # so it also validates that the small, shippable build compiles and passes. The dev job
+    # above still covers RelWithDebInfo (+ the C++11 header guard).
+    name: full build + test (tensorstore, Release)
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -54,28 +57,28 @@ jobs:
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: full-${{ runner.os }}
+          key: full-release-${{ runner.os }}
       - name: Configure
         run: >
-          cmake -S . -B build-full -G Ninja
-          -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          cmake -S . -B build-full-release -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_C_COMPILER=gcc-13
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
           -DCOPICK_ENABLE_ZARR=ON -DCOPICK_ENABLE_MESH=ON -DCOPICK_BUILD_EXAMPLES=ON
       - name: Build
         # Build only our targets so tensorstore's unused drivers (grpc/envoy/aws/http)
         # are never compiled.
-        run: cmake --build build-full --target copick_tests write_project read_project modify_project
+        run: cmake --build build-full-release --target copick_tests write_project read_project modify_project
       - name: Test
-        run: ctest --test-dir build-full --output-on-failure
+        run: ctest --test-dir build-full-release --output-on-failure
       - name: clang-tidy (informational)
         continue-on-error: true
         run: |
-          run-clang-tidy-18 -p build-full -header-filter='.*/(include/copick|src)/.*' \
+          run-clang-tidy-18 -p build-full-release -header-filter='.*/(include/copick|src)/.*' \
             $(find src -name '*.cpp') || true
       - name: Sample-data parity check (against Python-copick data; non-blocking)
         continue-on-error: true
         run: |
           python3 tests/scripts/fetch_sample_data.py sample_data
           export COPICK_SAMPLE_DIR="$PWD/sample_data/sample_project/sample_project"
-          ctest --test-dir build-full -R SampleData --output-on-failure
+          ctest --test-dir build-full-release -R SampleData --output-on-failure
