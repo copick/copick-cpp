@@ -1,0 +1,36 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 24, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "dev",
+      "displayName": "dev (model + json, no tensorstore)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "COPICK_BUILD_TESTS": "ON",
+        "COPICK_ENABLE_ZARR": "OFF",
+        "COPICK_ENABLE_MESH": "OFF"
+      }
+    },
+    {
+      "name": "full",
+      "inherits": "dev",
+      "displayName": "full (+ tensorstore zarr + tinygltf mesh)",
+      "binaryDir": "${sourceDir}/build-full",
+      "cacheVariables": {
+        "COPICK_ENABLE_ZARR": "ON",
+        "COPICK_ENABLE_MESH": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "dev", "configurePreset": "dev" },
+    { "name": "full", "configurePreset": "full" }
+  ],
+  "testPresets": [
+    { "name": "dev", "configurePreset": "dev", "output": { "outputOnFailure": true } },
+    { "name": "full", "configurePreset": "full", "output": { "outputOnFailure": true } }
+  ]
+}

@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  format:
+    name: clang-format
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format-18
+      - name: Check formatting
+        run: |
+          files=$(find include src tests examples tools \
+            \( -name '*.cpp' -o -name '*.h' -o -name '*.hpp' \))
+          echo "$files" | xargs clang-format-18 --dry-run --Werror
+
+  dev:
+    name: dev build + test (no tensorstore)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: sudo apt-get update && sudo apt-get install -y ninja-build g++-13 gcc-13
+      - name: Configure
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_C_COMPILER=gcc-13
+          -DCOPICK_CXX11_GUARD_COMPILER=g++-13
+      - name: Build
+        run: cmake --build build
+      - name: Test (incl. C++11 header guard)
+        run: ctest --test-dir build --output-on-failure
+
+  full:
+    name: full build + test (tensorstore)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: >
+          sudo apt-get update &&
+          sudo apt-get install -y ninja-build nasm g++-13 gcc-13 clang-tidy-18
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: full-${{ runner.os }}
+      - name: Configure
+        run: >
+          cmake -S . -B build-full -G Ninja
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_C_COMPILER=gcc-13
+          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
+          -DCOPICK_ENABLE_ZARR=ON -DCOPICK_ENABLE_MESH=ON -DCOPICK_BUILD_EXAMPLES=ON
+      - name: Build
+        # Build only our targets so tensorstore's unused drivers (grpc/envoy/aws/http)
+        # are never compiled.
+        run: cmake --build build-full --target copick_tests write_project read_project modify_project
+      - name: Test
+        run: ctest --test-dir build-full --output-on-failure
+      - name: clang-tidy (informational)
+        continue-on-error: true
+        run: |
+          run-clang-tidy-18 -p build-full -header-filter='.*/(include/copick|src)/.*' \
+            $(find src -name '*.cpp') || true
+      - name: Sample-data parity check (against Python-copick data; non-blocking)
+        continue-on-error: true
+        run: |
+          python3 tests/scripts/fetch_sample_data.py sample_data
+          export COPICK_SAMPLE_DIR="$PWD/sample_data/sample_project/sample_project"
+          ctest --test-dir build-full -R SampleData --output-on-failure

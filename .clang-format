@@ -1,0 +1,11 @@
+# Google style, 100-column. Run `pre-commit run --all-files` (or clang-format -i) to apply.
+---
+Language: Cpp
+BasedOnStyle: Google
+ColumnLimit: 100
+Standard: c++20
+DerivePointerAlignment: false
+PointerAlignment: Left
+IncludeBlocks: Preserve
+SortIncludes: CaseInsensitive
+AllowShortFunctionsOnASingleLine: Inline

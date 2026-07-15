@@ -1,0 +1,29 @@
+# clang-tidy configuration for copick-cpp.
+#
+# Note: modernize-* and cppcoreguidelines-* are intentionally NOT enabled — clang-tidy
+# sees the public headers through the C++20 implementation TUs and would suggest
+# C++14/17/20 constructs that must not leak into the C++11 public API. Diagnostics are
+# limited to our own code via HeaderFilterRegex (third-party headers are ignored).
+Checks: >
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  bugprone-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  misc-*,
+  -readability-identifier-length,
+  -readability-magic-numbers,
+  -readability-function-cognitive-complexity,
+  -readability-braces-around-statements,
+  -readability-named-parameter,
+  -misc-non-private-member-variables-in-classes,
+  -misc-include-cleaner,
+  -misc-no-recursion,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-reserved-identifier,
+  -clang-analyzer-optin.core.EnumCastOutOfRange
+
+HeaderFilterRegex: '.*/(include/copick|src)/.*'
+WarningsAsErrors: ''
+FormatStyle: file
