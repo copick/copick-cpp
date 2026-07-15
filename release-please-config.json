@@ -9,7 +9,8 @@
       "include-component-in-tag": false,
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
-        "include/copick/version.h"
+        "include/copick/version.h",
+        "CMakeLists.txt"
       ]
     }
   }
