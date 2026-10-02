@@ -10,6 +10,7 @@
 #define COPICK_TYPES_H
 
 #include <array>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -43,10 +44,14 @@ struct Location {
 
 /// A picked point: location + orientation + score + instance id.
 /// (copick.models.CopickPoint)
+///
+/// The particle centre is location + the transformation's translation (column 3), both in
+/// angstrom in the tomogram frame. instance_id is 64-bit, as copick's Python int and JSON
+/// integers are; for points along a filament it is the filament id (from 1; 0 = unassigned).
 struct Point {
   Location location;
   Matrix4 transformation = identity_matrix4();
-  int instance_id = 0;
+  std::int64_t instance_id = 0;
   double score = 1.0;
 };
 

@@ -26,6 +26,7 @@ add_library(copick
   src/version.cpp
   src/util/escape.cpp
   src/models/validate.cpp
+  src/models/filament.cpp
   src/models/array.cpp
   src/io/json.cpp
 )

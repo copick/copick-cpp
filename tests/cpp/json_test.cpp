@@ -126,3 +126,22 @@ TEST(PicksJson, RoundTripKeepsTransformationKey) {
   EXPECT_DOUBLE_EQ(again.points[0].location.y, 200.0);
   EXPECT_DOUBLE_EQ(again.points[0].transformation[1][3], 20.0);
 }
+
+TEST(PicksJson, InstanceIdsAre64Bit) {
+  // Python ints are unbounded; a 32-bit field silently truncated ids >= 2^31.
+  const std::string json = R"JSON({
+  "pickable_object_name": "microtubule", "user_id": "tracer", "session_id": "1",
+  "points": [
+    {"location": {"x": 0.0, "y": 0.0, "z": 0.0}, "instance_id": 4294967296},
+    {"location": {"x": 1.0, "y": 0.0, "z": 0.0}, "instance_id": 9007199254740993}
+  ]
+})JSON";
+  copick::CopickPicksFile f = copick::picks_from_json(json);
+  ASSERT_EQ(f.points.size(), 2u);
+  EXPECT_EQ(f.points[0].instance_id, INT64_C(4294967296));
+  EXPECT_EQ(f.points[1].instance_id, INT64_C(9007199254740993));
+
+  copick::CopickPicksFile back = copick::picks_from_json(copick::picks_to_json(f));
+  EXPECT_EQ(back.points[0].instance_id, INT64_C(4294967296));
+  EXPECT_EQ(back.points[1].instance_id, INT64_C(9007199254740993));
+}

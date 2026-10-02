@@ -11,6 +11,7 @@
 #include "copick/escape.h"
 #include "copick/export.h"
 #include "copick/features.h"
+#include "copick/filament.h"
 #include "copick/fwd.h"
 #include "copick/geometry.h"
 #include "copick/mesh.h"

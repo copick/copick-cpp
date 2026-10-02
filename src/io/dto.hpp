@@ -12,6 +12,7 @@
 #include <rfl/json.hpp>
 
 #include <array>
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <vector>
@@ -145,7 +146,7 @@ struct LocationDTO {
 struct PointDTO {
   LocationDTO location;
   std::optional<std::array<std::array<double, 4>, 4>> transformation_;
-  std::optional<int> instance_id;
+  std::optional<std::int64_t> instance_id;
   std::optional<double> score;
 };
 

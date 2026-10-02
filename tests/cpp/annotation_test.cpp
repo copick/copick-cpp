@@ -2,6 +2,7 @@
 // Built only under COPICK_ENABLE_ZARR.
 #include <gtest/gtest.h>
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -30,7 +31,7 @@ std::string config_for(const std::string& root_url) {
          R"(],"overlay_root":")" + root_url + R"("})";
 }
 
-copick::Point make_point(double x, double y, double z, int instance) {
+copick::Point make_point(double x, double y, double z, std::int64_t instance) {
   copick::Point p;
   p.location.x = x;
   p.location.y = y;
