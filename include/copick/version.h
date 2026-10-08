@@ -10,9 +10,9 @@
 
 // Version numbers are maintained by release-please (do not edit the values by hand).
 #define COPICK_VERSION_MAJOR 0         // x-release-please-major
-#define COPICK_VERSION_MINOR 2         // x-release-please-minor
+#define COPICK_VERSION_MINOR 3         // x-release-please-minor
 #define COPICK_VERSION_PATCH 0         // x-release-please-patch
-#define COPICK_VERSION_STRING "0.2.0"  // x-release-please-version
+#define COPICK_VERSION_STRING "0.3.0"  // x-release-please-version
 
 namespace copick {
 
