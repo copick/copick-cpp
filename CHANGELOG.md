@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.0](https://github.com/copick/copick-cpp/compare/v0.2.0...v0.3.0) (2026-10-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* Point::instance_id changes from int to std::int64_t, which changes the layout of Point and the ABI. Consumers (AreTomo3) rebuild; code that assigns an int keeps compiling.
+
+### Features
+
+* 64-bit instance ids and filament spec accessor ([#2](https://github.com/copick/copick-cpp/issues/2)) ([98a7cd7](https://github.com/copick/copick-cpp/commit/98a7cd7c9b00919e50fe54438c00c6b44c6b4def))
+
 ## [0.2.0](https://github.com/copick/copick-cpp/compare/v0.1.0...v0.2.0) (2026-07-15)
 
 
